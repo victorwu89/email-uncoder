@@ -1,2 +1,2 @@
-# email-uncoder
+# Email Uncoder
 uncode emails using pyscript

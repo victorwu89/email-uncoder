@@ -11,6 +11,34 @@
 
     <title>Email uncoder</title>
     <style>
+      #overlay{    
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background: black;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        color: white;}
+        .loading {
+          animation:extend 3s steps(3, end) 
+            ;
+          display:inline-block;
+          overflow:hidden;
+          vertical-align:bottom;
+          &:before {
+            content:"...";
+          }
+        }
+
+        @keyframes extend {
+          0% {
+            width:.25em;
+          }
+          100% {
+            width:1em;
+          }
+        }
       body, html{margin: 1% !important;background-color: white !important;color: black !important;}
       body{cursor:wait;}
       h1{font-weight:bold;font-size:30px;}
@@ -84,6 +112,7 @@
           if (mutation.type === "childList" && document.querySelector('.bk.bk-btn.bk-btn-primary').innerHTML == 'Upload') {
               const input = document.querySelector('input.bk')
               document.body.style.cursor = "default";
+              document.getElementById('overlay').style.display = "none";
               //on change of file
               input.addEventListener('change', (event) => {
                 const inputContent = document.querySelector("#input");
@@ -192,6 +221,7 @@
           main_task = asyncio.create_task(main())
 
     </py-script>
+      <div id="overlay"><h1>Loading<span class="loading"></span></h1></div>
       <h1 style="color:black !important;">Email uncoder</h1>
       <div id="fileinput"></div>
       <div id="upload"></div>
@@ -217,3 +247,5 @@
     </script>
   </body>
 </html>
+
+

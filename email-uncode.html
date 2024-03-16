@@ -21,8 +21,7 @@
         z-index: 9999;
         color: white;}
         .loading {
-          animation:extend 3s steps(3, end) 
-            ;
+          animation:extend 3s steps(3, end);
           display:inline-block;
           overflow:hidden;
           vertical-align:bottom;
@@ -30,6 +29,12 @@
             content:"...";
           }
         }
+
+      #overlay h1{
+        text-align: center;
+        top:45%; 
+        position: relative;
+      }
 
         @keyframes extend {
           0% {
@@ -175,6 +180,7 @@
         TEMP_FILE = []
         HTML_PRETTY = []
         DOCTYPE = "DOCTYPE"
+        HTML = "\u003chtml"
 
         fileInput = pn.widgets.FileInput(accept='.eml')
         uploadButton = pn.widgets.Button(name='Upload', button_type = 'primary')
@@ -187,22 +193,26 @@
         def emailUncode(event):
             try:
               fileStr = fileInput.value.decode('utf-8')
-              if fileInput.value is not None and fileStr[fileStr.rindex(DOCTYPE):] is not None:
-                result = re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE)
-                #split string on the doctype, remove unwanted text
-                fileStr = fileStr[fileStr.rindex(result.group()):].encode() 
-                if len(TEMP_FILE) > 0:
-                  TEMP_FILE.pop()
-                if len(HTML_PRETTY) > 0:
-                  HTML_PRETTY.pop()
-                #generate decoded data 
-                TEMP_FILE.append(quopri.decodestring(fileStr).decode('utf-8'))
-                HTML_PRETTY.append(bs4.BeautifulSoup(TEMP_FILE[0], "html.parser").prettify())
-                js.showDownload()
-                document.getElementById("code").innerText = HTML_PRETTY[0]
-                document.getElementById("output").innerHTML = HTML_PRETTY[0]
+              if (fileInput.value is not None or (fileStr[fileStr.index(HTML):] or fileStr[fileStr.rindex(DOCTYPE):]) ):
+                  if re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE):
+                    result = re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE)
+                  else:
+                    result = re.search(r"<=21html|\u003chtml", fileStr, re.IGNORECASE)
+
+                  #split string on the doctype, remove unwanted text
+                  fileStr = fileStr[fileStr.rindex(result.group()):].encode() 
+                  if len(TEMP_FILE) > 0:
+                    TEMP_FILE.pop()
+                  if len(HTML_PRETTY) > 0:
+                    HTML_PRETTY.pop()
+                  #generate decoded data 
+                  TEMP_FILE.append(quopri.decodestring(fileStr).decode('utf-8'))
+                  HTML_PRETTY.append(bs4.BeautifulSoup(TEMP_FILE[0], "html.parser").prettify())
+                  js.showDownload()
+                  document.getElementById("code").innerText = HTML_PRETTY[0]
+                  document.getElementById("output").innerHTML = HTML_PRETTY[0]
               else:
-                js.alertErr()
+                js.alertErr(event)
             except:
               js.alertErr(event)
               print("Please upload an eml file that includes proper HTML markup")
@@ -237,7 +247,7 @@
       <div id="code" class="tabcontent"></div>
       <div id="output" class="tabcontent"></div>
     <script type="text/javascript">
-      function alertErr() {
+      function alertErr(e) {
         alert("Please upload an eml file that includes proper HTML markup", e)
       }
 

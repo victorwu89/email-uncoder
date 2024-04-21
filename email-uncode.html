@@ -191,16 +191,31 @@
           return StringIO(HTML_PRETTY[0])
         
         def emailUncode(event):
+            counter = -1
+            boundary_str = ''
             try:
               fileStr = fileInput.value.decode('utf-8')
+              lines = fileStr.splitlines()
+
+              for line in lines:
+                  if re.match(r"--.+--$",lines[counter]):
+                    boundary_str = lines[counter]
+                    break
+                  counter = counter - 1
+  
               if (fileInput.value is not None or (fileStr[fileStr.index(HTML):] or fileStr[fileStr.rindex(DOCTYPE):]) ):
                   if re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE):
                     result = re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE)
                   else:
                     result = re.search(r"<=21html|\u003chtml", fileStr, re.IGNORECASE)
+                  boundary_result = fileStr.index(boundary_str)
 
                   #split string on the doctype, remove unwanted text
-                  fileStr = fileStr[fileStr.rindex(result.group()):].encode() 
+                  if boundary_result > 0:
+                    fileStr = fileStr[fileStr.rindex(result.group()):boundary_result].encode() 
+                  else:
+                    fileStr = fileStr[fileStr.rindex(result.group()):].encode()
+
                   if len(TEMP_FILE) > 0:
                     TEMP_FILE.pop()
                   if len(HTML_PRETTY) > 0:

@@ -1,3 +1,3 @@
 # Email Uncoder
 Uncode emails using Pyscript, try out below <br />
-[Try Me!](https://rawcdn.githack.com/victorwu89/email-uncoder/2fb2e2e4a8fa05f26274089063af73e659d23b6a/email-uncode.html)
+[Try Me!](https://rawcdn.githack.com/victorwu89/email-uncoder/c8dc56baaa9415ed04c33b5013d59042f54d973c/email-uncode.html)

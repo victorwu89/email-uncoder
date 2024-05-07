@@ -206,13 +206,16 @@
               if (fileInput.value is not None or (fileStr[fileStr.index(HTML):] or fileStr[fileStr.rindex(DOCTYPE):]) ):
                   if re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE):
                     result = re.search(r"<=21Doctype|..DOCTYPE", fileStr, re.IGNORECASE)
-                  else:
+                  elif re.search(r"<=21html|\u003chtml", fileStr, re.IGNORECASE):
                     result = re.search(r"<=21html|\u003chtml", fileStr, re.IGNORECASE)
+                  else:
+                    result = re.search(r"\n<.*?>",fileStr, re.IGNORECASE)
                   boundary_result = fileStr.index(boundary_str)
 
                   #split string on the doctype, remove unwanted text
                   if boundary_result > 0:
                     fileStr = fileStr[fileStr.rindex(result.group()):boundary_result].encode() 
+                    print(fileStr)
                   else:
                     fileStr = fileStr[fileStr.rindex(result.group()):].encode()
 
